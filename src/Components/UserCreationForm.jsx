@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import './userCreationForm.css';
 
+const validateEmail = (email) => {
+    return String(email)
+        .toLowerCase()
+        .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+};
+
 const UserCreationForm = () => {
     // User creation state
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [emailError, setEmailError] = useState(false);
     const [password, setPassword] = useState('');
     const [selectedOccupation, setSelectedOccupation] = useState('');
     const [selectedState, setSelectedState] = useState('');
@@ -34,6 +43,13 @@ const UserCreationForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        if (!validateEmail(email)) {
+            setEmailError(true);
+            return;
+        } else {
+            setEmailError(false);
+        }
+
         let submittedData = {
             'name': name,
             'email': email,
@@ -42,6 +58,7 @@ const UserCreationForm = () => {
             'state': selectedState,
         };
 
+        document.getElementById('submit-button').disabled = true;
         fetch('https://frontend-take-home.fetchrewards.com/form', {
             method: 'POST',
             body: JSON.stringify(submittedData),
@@ -60,7 +77,7 @@ const UserCreationForm = () => {
     }
     
     // Reset states so form can be re-filled out
-    const handleReturnClick = () => {
+    const resetForm = () => {
         setName('');
         setEmail('');
         setPassword('');
@@ -88,72 +105,111 @@ const UserCreationForm = () => {
                     the email address you provided.
                 </p>
                 <div className='form-button'>
-                    <input type='button' value='Go back' onClick={handleReturnClick}/>
+                    <input type='button' value='Go back' onClick={resetForm}/>
                 </div>
             </div>
         );
     // If no error, has loaded, and hasn't been submitted, render the form
     } else {
         return (
-            <div className='background'>
-                <form id='user-creation-form' method='POST' onSubmit={handleSubmit}>
-                    <div id='title-box'>
-                        <img src='fetch-logo-text.png' alt='Fetch Logo' /> 
+            <div className="background">
+                <form
+                    id="user-creation-form"
+                    method="POST"
+                    onSubmit={handleSubmit}
+                >
+                    <div id="title-box">
+                        <img src="fetch-logo-text.png" alt="Fetch Logo" />
                     </div>
-                    <div id='name-input'>
-                        <input type='text' 
-                            placeholder='Full Name'
-                            name={name} 
-                            onChange={e => setName(e.target.value)}
-                            required 
+                    <div id="name-input">
+                        <input
+                            type="text"
+                            placeholder="Full Name"
+                            name={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
                         />
                     </div>
-                    <div id='email-input'>
-                        <input 
-                            type='text' 
-                            placeholder='Email' 
-                            name={email} 
-                            onChange={e => setEmail(e.target.value)}
-                            required 
+                    <div id="email-input">
+                        <input
+                            type="text"
+                            placeholder="Email"
+                            name={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                        {emailError ? (
+                            <div>
+                                <p style={{ color: 'red' }}>
+                                    Please enter a valid email.
+                                </p>
+                            </div>
+                        ) : null}
+                    </div>
+
+                    <div id="password-input">
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            name={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
                     </div>
-                    <div id='password-input'>
-                        <input 
-                            type='password' 
-                            placeholder='Password' 
-                            name={password}    
-                            onChange={e => setPassword(e.target.value)}
-                            required 
-                        />
-                    </div>
-                    <div id='dropdowns'>
-                        <div id='occupation-dropdown'>
-                            <select 
-                                name='occupation-select' 
-                                onChange={e => setSelectedOccupation(e.target.value)}
+                    <div id="dropdowns">
+                        <div id="occupation-dropdown">
+                            <select
+                                name="occupation-select"
+                                onChange={(e) =>
+                                    setSelectedOccupation(e.target.value)
+                                }
                                 required
                             >
-                                <option className='dropdown-placeholder' value='' selected disabled hidden>Select Occupation</option>
+                                <option
+                                    className="dropdown-placeholder"
+                                    value=""
+                                    selected
+                                    disabled
+                                    hidden
+                                >
+                                    Select Occupation
+                                </option>
                                 {occupations.map((occu) => (
                                     <option key={occu}>{occu}</option>
                                 ))}
                             </select>
                         </div>
-                        <div id='state-dropdown'>
-                            <select 
-                                name='state-select'
-                                onChange={e => setSelectedState(e.target.value)}
+                        <div id="state-dropdown">
+                            <select
+                                name="state-select"
+                                onChange={(e) =>
+                                    setSelectedState(e.target.value)
+                                }
                                 required
                             >
-                                <option className='dropdown-placeholder' value='' selected disabled hidden>Select State</option>
+                                <option
+                                    className="dropdown-placeholder"
+                                    value=""
+                                    selected
+                                    disabled
+                                    hidden
+                                >
+                                    Select State
+                                </option>
                                 {states.map((state) => (
-                                    <option key={state.abbreviation}>{state.name}</option>
+                                    <option key={state.abbreviation}>
+                                        {state.name}
+                                    </option>
                                 ))}
                             </select>
                         </div>
                     </div>
-                    <div className='form-button'>
-                        <input type='submit' value='Sign up' />
+                    <div className="form-button">
+                        <input
+                            id="submit-button"
+                            type="submit"
+                            value="Sign up"
+                        />
                     </div>
                 </form>
             </div>
