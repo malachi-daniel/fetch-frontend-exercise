@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import './userCreationForm.css';
+import '../styles/userCreationForm.css';
+import NameInput from './NameInput';
+import EmailInput from './EmailInput';
+import PasswordInput from './PasswordInput';
+import Dropdowns from './Dropdowns.jsx';
+import FormButton from './FormButton';
 
 const validateEmail = (email) => {
     return String(email)
@@ -23,20 +28,23 @@ const UserCreationForm = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [error, setError] = useState(null);
     const [occupations, setOccupations] = useState([]);
-    const [states, setStates] = useState([]); 
+    const [states, setStates] = useState([]);
 
     // Get JSON body when component mounts
     useEffect(() => {
         fetch('https://frontend-take-home.fetchrewards.com/form')
-        .then((res) => res.json())
-        .then((data) => {
-            setIsLoaded(true);
-            setOccupations(data.occupations);
-            setStates(data.states)
-        }, (err) => {
-            setIsLoaded(true);
-            setError(err);
-        });
+            .then((res) => res.json())
+            .then(
+                (data) => {
+                    setIsLoaded(true);
+                    setOccupations(data.occupations);
+                    setStates(data.states);
+                },
+                (err) => {
+                    setIsLoaded(true);
+                    setError(err);
+                }
+            );
     }, []);
 
     // Handle submission to API endpoint
@@ -51,11 +59,11 @@ const UserCreationForm = () => {
         }
 
         let submittedData = {
-            'name': name,
-            'email': email,
-            'password': password,
-            'occupation': selectedOccupation,
-            'state': selectedState,
+            name: name,
+            email: email,
+            password: password,
+            occupation: selectedOccupation,
+            state: selectedState,
         };
 
         document.getElementById('submit-button').disabled = true;
@@ -65,17 +73,24 @@ const UserCreationForm = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-        }).then((response) => {
-            if (response.status === 200) {
-                setIsSubmitted(true);
-            } else {
-                setError(new Error('An error occured when submitting the form, please refresh the page.'));
+        }).then(
+            (response) => {
+                if (response.status === 200) {
+                    setIsSubmitted(true);
+                } else {
+                    setError(
+                        new Error(
+                            'An error occured when submitting the form, please refresh the page.'
+                        )
+                    );
+                }
+            },
+            (err) => {
+                setError(err);
             }
-        }, (err) => {
-            setError(err);
-        });
-    }
-    
+        );
+    };
+
     // Reset states so form can be re-filled out
     const resetForm = () => {
         setName('');
@@ -84,32 +99,36 @@ const UserCreationForm = () => {
         setSelectedOccupation('');
         setSelectedState('');
         setIsSubmitted(false);
-    }
+    };
 
     // If any error occers, display it on background element
     if (error) {
-        return <div className='background'>Error: {error.message}<br/>Please reload</div>;
-    // Loading message for GET request
+        return (
+            <div className="background">
+                Error: {error.message}
+                <br />
+                Please reload
+            </div>
+        );
+        // Loading message for GET request
     } else if (!isLoaded) {
-        return <div className='background'>Loading...</div>;
-    // If form has been submitted, provide feedback on completion
+        return <div className="background">Loading...</div>;
+        // If form has been submitted, provide feedback on completion
     } else if (isSubmitted) {
         return (
-            <div className='background'>
-                <div id='title-box-2'>
-                    <img src='fetch-logo-text.png' alt='Fetch Logo' /> 
+            <div className="background">
+                <div id="title-box-2">
+                    <img src="fetch-logo-text.png" alt="Fetch Logo" />
                 </div>
                 <p>
                     Thank you for completing the form! <br />
                     We've sent you a confirmation at <br />
                     the email address you provided.
                 </p>
-                <div className='form-button'>
-                    <input type='button' value='Go back' onClick={resetForm}/>
-                </div>
+                <FormButton type="button" value="Go back" onClick={resetForm} />
             </div>
         );
-    // If no error, has loaded, and hasn't been submitted, render the form
+        // If no error, has loaded, and hasn't been submitted, render the form
     } else {
         return (
             <div className="background">
@@ -121,100 +140,27 @@ const UserCreationForm = () => {
                     <div id="title-box">
                         <img src="fetch-logo-text.png" alt="Fetch Logo" />
                     </div>
-                    <div id="name-input">
-                        <input
-                            type="text"
-                            placeholder="Full Name"
-                            name={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div id="email-input">
-                        <input
-                            type="text"
-                            placeholder="Email"
-                            name={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                        {emailError ? (
-                            <div>
-                                <p style={{ color: 'red' }}>
-                                    Please enter a valid email.
-                                </p>
-                            </div>
-                        ) : null}
-                    </div>
-
-                    <div id="password-input">
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            name={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div id="dropdowns">
-                        <div id="occupation-dropdown">
-                            <select
-                                name="occupation-select"
-                                onChange={(e) =>
-                                    setSelectedOccupation(e.target.value)
-                                }
-                                required
-                            >
-                                <option
-                                    className="dropdown-placeholder"
-                                    value=""
-                                    selected
-                                    disabled
-                                    hidden
-                                >
-                                    Select Occupation
-                                </option>
-                                {occupations.map((occu) => (
-                                    <option key={occu}>{occu}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div id="state-dropdown">
-                            <select
-                                name="state-select"
-                                onChange={(e) =>
-                                    setSelectedState(e.target.value)
-                                }
-                                required
-                            >
-                                <option
-                                    className="dropdown-placeholder"
-                                    value=""
-                                    selected
-                                    disabled
-                                    hidden
-                                >
-                                    Select State
-                                </option>
-                                {states.map((state) => (
-                                    <option key={state.abbreviation}>
-                                        {state.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="form-button">
-                        <input
-                            id="submit-button"
-                            type="submit"
-                            value="Sign up"
-                        />
-                    </div>
+                    <NameInput name={name} setName={setName} />
+                    <EmailInput
+                        email={email}
+                        setEmail={setEmail}
+                        emailError={emailError}
+                    />
+                    <PasswordInput
+                        password={password}
+                        setPassword={setPassword}
+                    />
+                    <Dropdowns
+                        occupations={occupations}
+                        states={states}
+                        setSelectedOccupation={setSelectedOccupation}
+                        setSelectedState={setSelectedState}
+                    />
+                    <FormButton type="submit" value="Sign up" />
                 </form>
             </div>
         );
     }
-}
+};
 
 export default UserCreationForm;

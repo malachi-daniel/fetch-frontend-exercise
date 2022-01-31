@@ -1,0 +1,32 @@
+#dropdowns {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    text-align: left;
+}
+
+#dropdowns select {
+    width: 100%;
+    height: 35px;
+    border: none;
+    border-bottom: 1px solid grey;
+    outline: none;
+    color: black;
+}
+
+#dropdowns select:hover {
+    cursor: pointer;
+}
+
+#occupation-dropdown,
+#state-dropdown {
+    width: 100%;
+    overflow: hidden;
+}
+
+#state-dropdown {
+    margin-left: 30px;
+}

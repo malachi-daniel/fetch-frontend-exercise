@@ -1,0 +1,19 @@
+.form-button {
+    margin-top: 40px;
+}
+
+.form-button input {
+    width: 100px;
+    border: none;
+    outline: none;
+    padding: 15px;
+    border-radius: 50px;
+    background: #300d38;
+    color: white;
+    font-weight: 500;
+}
+
+.form-button input:hover {
+    background: #880e72;
+    cursor: pointer;
+}

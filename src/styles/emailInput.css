@@ -1,0 +1,27 @@
+#email-input {
+    width: 100%;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#email-input input {
+    width: 100%;
+    border-bottom-width: 1px !important;
+    border-width: 0px;
+    outline: none;
+    padding: 8px 0;
+}
+
+#email-input > div {
+    text-align: left;
+    font-size: 9pt;
+    margin-top: 5px;
+}
+
+#email-input > div > p {
+    height: 100%;
+    width: 100%;
+    display: contents;
+}
